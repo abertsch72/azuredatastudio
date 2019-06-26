@@ -27,6 +27,8 @@ import { IQueryModelService } from 'sql/platform/query/common/queryModel';
 import { SelectBox } from 'sql/base/browser/ui/selectBox/selectBox';
 import { attachEditableDropdownStyler, attachSelectBoxStyler } from 'sql/platform/theme/common/styler';
 import { Dropdown } from 'sql/base/parts/editableDropdown/browser/dropdown';
+import { IExtensionManagementService } from 'vs/platform/extensionManagement/common/extensionManagement';
+import { ExtensionManagementService } from 'vs/platform/extensionManagement/node/extensionManagementService';
 
 /**
  * Action class that query-based Actions will extend. This base class automatically handles activating and
@@ -104,16 +106,19 @@ export class RunQueryAction extends QueryTaskbarAction {
 	public static EnabledClass = 'start';
 	public static ID = 'runQueryAction';
 	notificationService: INotificationService;
+	extensionManagementService: IExtensionManagementService;
 
 	constructor(
 		editor: QueryEditor,
 		@IQueryModelService protected readonly queryModelService: IQueryModelService,
 		@IConnectionManagementService connectionManagementService: IConnectionManagementService,
-		@INotificationService notificationService: INotificationService
+		@INotificationService notificationService: INotificationService,
+		@IExtensionManagementService extensionManagementService: IExtensionManagementService
 	) {
 		super(connectionManagementService, editor, RunQueryAction.ID, RunQueryAction.EnabledClass);
 		this.label = nls.localize('runQueryLabel', 'Run');
 		this.notificationService = notificationService;
+		this.extensionManagementService = extensionManagementService;
 	}
 
 	public run(): Promise<void> {
@@ -122,6 +127,10 @@ export class RunQueryAction extends QueryTaskbarAction {
 				// If we are already connected, run the query
 				this.downloadSandDance();
 				this.runQuery(this.editor);
+				console.log('Download Button Pressed --------------------------------------------------------------------');
+				console.log(this.extensionManagementService.getInstalled()
+				);
+				console.log('FINISHED IF STATEMENT ----------------------------------------------------------------------');
 			} else {
 				// If we are not already connected, prompt for connection and run the query if the
 				// connection succeeds. "runQueryOnCompletion=true" will cause the query to run after connection

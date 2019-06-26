@@ -32,6 +32,8 @@ import * as TypeMoq from 'typemoq';
 import * as assert from 'assert';
 import { TestStorageService, TestContextService } from 'vs/workbench/test/workbenchTestServices';
 import { MockContextKeyService } from 'vs/platform/keybinding/test/common/mockKeybindingService';
+import { IExtensionManagementService } from 'vs/platform/extensionManagement/common/extensionManagement';
+
 
 let none: void;
 
@@ -70,7 +72,7 @@ suite('SQL QueryAction Tests', () => {
 
 	test('setClass sets child CSS class correctly', (done) => {
 		// If I create a RunQueryAction
-		let queryAction: QueryTaskbarAction = new RunQueryAction(undefined, undefined, undefined, undefined);
+		let queryAction: QueryTaskbarAction = new RunQueryAction(undefined, undefined, undefined, undefined, undefined);
 
 		// "class should automatically get set to include the base class and the RunQueryAction class
 		let className = RunQueryAction.EnabledClass;
@@ -94,7 +96,7 @@ suite('SQL QueryAction Tests', () => {
 		editor.setup(x => x.input).returns(() => testQueryInput.object);
 
 		// If I create a QueryTaskbarAction and I pass a non-connected editor to _getConnectedQueryEditorUri
-		let queryAction: QueryTaskbarAction = new RunQueryAction(undefined, undefined, connectionManagementService.object, undefined);
+		let queryAction: QueryTaskbarAction = new RunQueryAction(undefined, undefined, connectionManagementService.object, undefined, undefined);
 		let connected: boolean = queryAction.isConnected(editor.object);
 
 		// I should get an unconnected state
@@ -137,7 +139,7 @@ suite('SQL QueryAction Tests', () => {
 		});
 
 		// If I call run on RunQueryAction when I am not connected
-		let queryAction: RunQueryAction = new RunQueryAction(editor.object, queryModelService.object, connectionManagementService.object, undefined);
+		let queryAction: RunQueryAction = new RunQueryAction(editor.object, queryModelService.object, connectionManagementService.object, undefined, undefined);
 		isConnected = false;
 		calledRunQueryOnInput = false;
 		queryAction.run();
@@ -196,7 +198,7 @@ suite('SQL QueryAction Tests', () => {
 		let queryModelService = TypeMoq.Mock.ofType(QueryModelService, TypeMoq.MockBehavior.Loose);
 
 		// If I call run on RunQueryAction when I have a non empty selection
-		let queryAction: RunQueryAction = new RunQueryAction(queryEditor.object, queryModelService.object, connectionManagementService.object, undefined);
+		let queryAction: RunQueryAction = new RunQueryAction(queryEditor.object, queryModelService.object, connectionManagementService.object, undefined, undefined);
 		isSelectionEmpty = false;
 		queryAction.run();
 
@@ -267,7 +269,7 @@ suite('SQL QueryAction Tests', () => {
 		/// End Setup Test ///
 
 		////// If I call run on RunQueryAction while disconnected and with an undefined selection
-		let queryAction: RunQueryAction = new RunQueryAction(queryEditor.object, undefined, connectionManagementService.object, undefined);
+		let queryAction: RunQueryAction = new RunQueryAction(queryEditor.object, undefined, connectionManagementService.object, undefined, undefined);
 		isConnected = false;
 		selectionToReturnInGetSelection = undefined;
 		queryAction.run();
