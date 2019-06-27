@@ -28,8 +28,11 @@ import { SelectBox } from 'sql/base/browser/ui/selectBox/selectBox';
 import { attachEditableDropdownStyler, attachSelectBoxStyler } from 'sql/platform/theme/common/styler';
 import { Dropdown } from 'sql/base/parts/editableDropdown/browser/dropdown';
 
+<<<<<<< HEAD
 import { localize } from 'vs/nls';
 import * as vscode from 'vscode';
+=======
+>>>>>>> 9f63a5ebdce23fc668b5743a9cd82c84b3ac0159
 /**
  * Action class that query-based Actions will extend. This base class automatically handles activating and
  * deactivating the button when a SQL file is opened.
@@ -124,13 +127,10 @@ export class RunQueryAction extends QueryTaskbarAction {
 				// If we are already connected, run the query
 				this.downloadSandDance();
 				this.runQuery(this.editor);
-				console.log('is connected! ----------------------------------------');
 			} else {
 				// If we are not already connected, prompt for connection and run the query if the
 				// connection succeeds. "runQueryOnCompletion=true" will cause the query to run after connection
-				this.downloadSandDance();
 				this.connectEditor(this.editor, RunQueryOnConnectionMode.executeQuery, this.editor.getSelection());
-				console.log('is not connected! -----------------------------------------');
 			}
 		}
 		return Promise.resolve(null);
@@ -182,7 +182,7 @@ export class RunQueryAction extends QueryTaskbarAction {
 			Severity.Info,
 			downloadSandDanceNotice,
 			[{
-				label: localize('downloadSandDanceNotice.yes', "Download"),
+				label: nls.localize('downloadSandDanceNotice.yes', "Download"),
 				run: () => {
 					vscode.extensions.getExtension('msrvida.azdata-sanddance');
 
@@ -193,7 +193,7 @@ export class RunQueryAction extends QueryTaskbarAction {
 					// storageService.store(DownloadSandDance.ENABLE_PREVIEW_FEATURES_SHOWN, true, StorageScope.GLOBAL);
 				}
 			}, {
-				label: localize('downloadSandDanceNotice.no', "Dismiss"),
+				label: nls.localize('downloadSandDanceNotice.no', "Dismiss"),
 				run: () => {
 					console.log('dimsiss!!!!!!!!!!!');
 					// Error Message : "You cannot use this feature without downloading the SandDance extension."
