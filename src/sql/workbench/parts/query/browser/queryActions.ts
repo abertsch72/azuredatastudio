@@ -29,7 +29,7 @@ import { attachEditableDropdownStyler, attachSelectBoxStyler } from 'sql/platfor
 import { Dropdown } from 'sql/base/parts/editableDropdown/browser/dropdown';
 
 import { localize } from 'vs/nls';
-
+import * as vscode from 'vscode';
 /**
  * Action class that query-based Actions will extend. This base class automatically handles activating and
  * deactivating the button when a SQL file is opened.
@@ -176,6 +176,7 @@ export class RunQueryAction extends QueryTaskbarAction {
 
 	private downloadSandDance(): void {
 
+		const choiceNever = localize('neverShowAgain', "Don't Show Again");
 		const downloadSandDanceNotice = localize('downloadSandDance.notice', "Would you like to visualize your data? The new visualizer feature can be activated by downloading the SandDance extension.");
 		this.notificationService.prompt(
 			Severity.Info,
@@ -183,6 +184,9 @@ export class RunQueryAction extends QueryTaskbarAction {
 			[{
 				label: localize('downloadSandDanceNotice.yes', "Download"),
 				run: () => {
+					vscode.extensions.getExtension('msrvida.azdata-sanddance');
+
+					console.log('hit the download sanddance button!!');
 					// vscode.extensions.getExtension(name/id)
 
 					// configurationService.updateValue('workbench.enablePreviewFeatures', true);
@@ -191,18 +195,33 @@ export class RunQueryAction extends QueryTaskbarAction {
 			}, {
 				label: localize('downloadSandDanceNotice.no', "Dismiss"),
 				run: () => {
+					console.log('dimsiss!!!!!!!!!!!');
 					// Error Message : "You cannot use this feature without downloading the SandDance extension."
 
 					// configuration1Service.updateValue('workbench.enablePreviewFeatures', false);
 				}
 			}, {
-				label: localize('downloadSandDanceNotice.never', "Don't ask again"),
+				//label: localize('downloadSandDanceNotice.never', "Don't ask again"),
+				label: choiceNever,
 				run: () => {
 					// configurationService.updateValue('workbench.enablePreviewFeatures', false);
 					// storageService.store(DownloadSandDance.ENABLE_PREVIEW_FEATURES_SHOWN, true, StorageScope.GLOBAL);
 				},
-				//isSecondary: true
-			}]
+				isSecondary: true
+			}],
+			{
+				sticky: true,
+				onCancel: () => {
+					/* __GDPR__
+						"extensionWorkspaceRecommendations:popup" : {
+							"userReaction" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
+						}
+					*/
+					// this.telemetryService.publicLog('extensionWorkspaceRecommendations:popup', { userReaction: 'cancelled' });
+
+					// c(undefined);
+				}
+			}
 		);
 	}
 
