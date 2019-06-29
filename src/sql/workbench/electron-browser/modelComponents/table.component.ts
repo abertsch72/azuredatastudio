@@ -105,7 +105,7 @@ export default class TableComponent extends ComponentBase implements IComponent,
 				syncColumnCellResize: true,
 				enableColumnReorder: false,
 				enableCellNavigation: true,
-				forceFitColumns: false
+				forceFitColumns: this.forceFitColumns
 			};
 
 			this._table = new Table<Slick.SlickData>(this._inputContainer.nativeElement, { dataProvider: this._tableData, columns: this._tableColumns }, options);
@@ -165,6 +165,7 @@ export default class TableComponent extends ComponentBase implements IComponent,
 		if (this.selectedRows) {
 			this._table.setSelectedRows(this.selectedRows);
 		}
+		let forceFit: boolean = this.forceFitColumns;
 
 		this.layoutTable();
 		this.validate();
@@ -198,5 +199,9 @@ export default class TableComponent extends ComponentBase implements IComponent,
 
 	public set selectedRows(newValue: number[]) {
 		this.setPropertyFromUI<azdata.TableComponentProperties, number[]>((props, value) => props.selectedRows = value, newValue);
+	}
+
+	public get forceFitColumns() {
+		return this.getPropertyOrDefault<azdata.TableComponentProperties, boolean>((props) => props.forceFitColumns, true);
 	}
 }
