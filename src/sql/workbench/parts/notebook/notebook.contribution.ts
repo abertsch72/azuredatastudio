@@ -38,7 +38,17 @@ actionRegistry.registerWorkbenchAction(
 		NewNotebookAction,
 		NewNotebookAction.ID,
 		NewNotebookAction.LABEL,
-		{ primary: KeyMod.WinCtrl | KeyMod.Shift | KeyCode.KEY_N },
+		{
+			mac: {
+				primary: KeyMod.WinCtrl | KeyMod.Shift | KeyCode.KEY_N
+			},
+			win: {
+				primary: KeyCode.Ctrl | KeyMod.Shift | KeyCode.KEY_N
+			},
+			linux: {
+				primary: KeyCode.Ctrl | KeyMod.Shift | KeyCode.KEY_N
+			}
+		},
 
 	),
 	NewNotebookAction.LABEL
