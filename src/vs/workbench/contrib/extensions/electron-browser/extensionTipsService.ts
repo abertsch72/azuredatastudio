@@ -172,7 +172,7 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 
 		// {{SQL CARBON EDIT}} Extension Recommendation on ADS Launch
 		this.promptADSLaunchRecommendedExtensions();
-	//	this.promptVisualizerRecommendedExtensions();
+		//	this.promptVisualizerRecommendedExtensions();
 	}
 
 	private isEnabled(): boolean {
@@ -1133,9 +1133,34 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 			.map(extensionId => (<IExtensionRecommendation>{ extensionId, sources: ['application'] })));
 	}
 
+	showRecommendationOnCount(): boolean {
+		return true;
+	}
+
 	// called when runQuery to make visualizer extensions more discoverable
 	promptVisualizerRecommendedExtensions(): void {
 		const storageKey = 'extensionsAssistant/VisualizerRecommendationsIgnore';
+		const SESSION_COUNT_KEY = 'extensionsAssistant/runQueryCount';
+		const LAST_SESSION_DATE_KEY = 'extensionsAssistant/lastSessionDate';
+
+		// const date = new Date().toDateString();
+		// const lastSessionDate = this.storageService.get(LAST_SESSION_DATE_KEY, StorageScope.GLOBAL, new Date(0).toDateString());
+
+		// if (date === lastSessionDate) {
+		// 	console.log('date is the same');
+		// 	return;
+		// }
+
+		// const sessionCount = (this.storageService.getNumber(SESSION_COUNT_KEY, StorageScope.GLOBAL, 0) || 0) + 1;
+		// // this.storageService.store(LAST_SESSION_DATE_KEY, date, StorageScope.GLOBAL);
+		// this.storageService.store(SESSION_COUNT_KEY, sessionCount, StorageScope.GLOBAL);
+
+		// console.log(this.storageService.getNumber(SESSION_COUNT_KEY, StorageScope.GLOBAL, 0));
+
+		// if (sessionCount < 42) { //9
+		// 	console.log("session is low!");
+		// 	return;
+		// }
 
 		if (this.storageService.getBoolean(storageKey, StorageScope.GLOBAL, false)) {
 			return;
@@ -1150,9 +1175,9 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 				return new Promise<void>(c => {
 					this.notificationService.prompt(
 						Severity.Info,
-						localize('visualizer.VisualizerExtensions', "Visualize your data now. Install SandDance extension to visualize your data." ),
+						localize('visualizerRecommendation.VisualizerExtensions', "Visualize your data now. Install the SandDance extension to visualize your data."),
 						[{
-							label: localize('visualizer.installAll', "Install SandDance"),
+							label: localize('visualizerRecommendation.installAll', "Install Extension"),
 							run: () => {
 								/* __GDPR__
 								"extensionAppLaunchRecommendations:popup" : {
@@ -1166,7 +1191,7 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 								c(undefined);
 							}
 						}, {
-							label: localize('visualizer.showRecommendations', "Show SandDance"),
+							label: localize('visualizerRecommendation.showRecommendations', "More Info"),
 							run: () => {
 								/* __GDPR__
 									"extensionAppLaunchRecommendations:popup" : {
@@ -1189,8 +1214,8 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 										"userReaction" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
 									}
 								*/
-							//	this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'neverShowAgain' });
-							//	this.storageService.store(storageKey, true, StorageScope.GLOBAL);
+								//	this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'neverShowAgain' });
+								//	this.storageService.store(storageKey, true, StorageScope.GLOBAL);
 								c(undefined);
 							}
 						}],
@@ -1202,7 +1227,7 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 										"userReaction" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
 									}
 								*/
-							//	this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'cancelled' });
+								//	this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'cancelled' });
 								c(undefined);
 							}
 						}
@@ -1217,12 +1242,6 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 
 	// called when Visualizer icon is clicked in the Query Results grid; "Never Show Again" is not an option
 	promptVisualizerExtensions(): void {
-		const storageKey = 'extensionsAssistant/VisualizerRecommendationsIgnore';
-
-		if (this.storageService.getBoolean(storageKey, StorageScope.GLOBAL, false)) {
-			return;
-		}
-
 		let recommendations: IExtensionRecommendation[];
 		let localExtensions: ILocalExtension[];
 		const getRecommendationPromise = this.getVisualizerRecommendations().then(recs => { recommendations = recs; });
@@ -1232,9 +1251,9 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 				return new Promise<void>(c => {
 					this.notificationService.prompt(
 						Severity.Info,
-						localize('visualizer.VisualizerExtensions', "Visualize your data now. Install SandDance extension to visualize your data." ),
+						localize('visualizer.VisualizerExtensions', "To utilize the Visualizer feature, the SandDance extension is required to be installed."),
 						[{
-							label: localize('visualizer.installAll', "Install SandDance"),
+							label: localize('visualizer.installAll', "Install Extension"),
 							run: () => {
 								/* __GDPR__
 								"extensionAppLaunchRecommendations:popup" : {
@@ -1242,13 +1261,13 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 								}
 								*/
 								//this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'install' });
-								const installAllAction = this.instantiationService.createInstance(InstallVisualizerExtensionsAction, InstallVisualizerExtensionsAction.ID, localize('installAll', "Install All"), recommendations);
+								const installAllAction = this.instantiationService.createInstance(InstallVisualizerExtensionsAction, InstallVisualizerExtensionsAction.ID, localize('visualizer.installAll', "Install Extension"), recommendations);
 								installAllAction.run();
 								installAllAction.dispose();
 								c(undefined);
 							}
 						}, {
-							label: localize('visualizer.showRecommendations', "Show SandDance"),
+							label: localize('visualizer.showExtensions', "More Info"),
 							run: () => {
 								/* __GDPR__
 									"extensionAppLaunchRecommendations:popup" : {
@@ -1257,7 +1276,7 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 								*/
 								//this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'show' });
 
-								const showAction = this.instantiationService.createInstance(ShowVisualizerExtensionsAction, ShowVisualizerExtensionsAction.ID, localize('showRecommendations', "Show Recommendations"));
+								const showAction = this.instantiationService.createInstance(ShowVisualizerExtensionsAction, ShowVisualizerExtensionsAction.ID, localize('visualizer.showExtensions', "More Info"));
 								showAction.run();
 								showAction.dispose();
 								c(undefined);
@@ -1271,7 +1290,7 @@ export class ExtensionTipsService extends Disposable implements IExtensionTipsSe
 										"userReaction" : { "classification": "SystemMetaData", "purpose": "FeatureInsight" }
 									}
 								*/
-							//	this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'cancelled' });
+								//	this.telemetryService.publicLog('extensionAppLaunchRecommendations:popup', { userReaction: 'cancelled' });
 								c(undefined);
 							}
 						}
